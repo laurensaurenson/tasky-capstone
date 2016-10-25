@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>My Capstone Whatever</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body ng-app="app">
+  <h1>capstone whatevs</h1>
+
+  <div ng-include="'./partials/nav.html'">
+    
+  </div>
+
+  <div ng-view></div>
+
+  <!-- requirements -->
+  <script src="lib/angular/angular.min.js"></script>
+  <script src="lib/angular-route/angular-route.min.js"></script>
+
+  <!-- app things -->
+  <script src="app/main.js"></script>
+  <script src="app/config/config.js"></script>
+  <script src="app/controllers/HomeCtrl.js"></script>
+  <script src="app/controllers/LoginCtrl.js"></script>
+  <script src="app/controllers/RegisterCtrl.js"></script>
+  <script src="app/controllers/TaskCtrl.js"></script>
+  <script src="app/controllers/NewTaskCtrl.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!-- taskName: $scope.name,
+    repeatableTime: $scope.repeat,
+    type: $scope.type,
+    difficulty: $scope.difficulty, 
+    notes: $scope.notes -->
+
+<h2>new task</h2>
+
+<form ng-submit="addTask()" accept-charset="utf-8">
+  <label>Task Name: <input ng-model="name" type="text" name="" value=""></label>
+  <label>Notes: <input ng-model="notes" type="textarea" name="" value=""></label>
+
+  <button type="submit">submit</button>
+</form>
