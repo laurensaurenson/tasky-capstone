@@ -32,4 +32,12 @@ app.config(function ( $routeProvider ) {
       controller: 'FriendCtrl',
       templateUrl: 'partials/addFriend.html'
     })
+    .when('/profile', {
+      controller: 'ProfileCtrl',
+      templateUrl: 'partials/profile.html'
+    })
+    .when('/logout', {
+      controller: 'LoginCtrl',
+      templateUrl: 'partials/logout.html'
+    })
 })

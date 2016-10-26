@@ -10,8 +10,13 @@ app.controller('FriendCtrl', function ( $scope, $http, $location ) {
     const newFriend = {
       email : $scope.email
     }
-
     $http.post('/api/friends', newFriend)
   }
+
+  $http.get('/api/friends')
+    .then(friends => {
+      $scope.friends = friends.data
+      console.log('friends:  ', friends)
+    })
 
 })

@@ -18,6 +18,12 @@ router.use(session({
     secret: 'supersecretkey'
 }));
 
+router.get('/api/user', (req, res, err ) => {
+  Users
+    .findById(req.session.user._id)
+    .then(user => res.status(201).json(user.profileInfo))
+})
+
 router.post('/api/register', (req, res, err) => {
   Users
     .create( req.body )
@@ -34,7 +40,7 @@ router.put('/api/register/:userId', (req, res, err) => {
 
 router.get('/api/tasks', (req, res, err) => {
   Tasks
-    .find()
+    .find({'userId': req.session.user._id})
     .then(tasks => res.json({tasks}))
     .catch(err)
 })
@@ -66,7 +72,18 @@ router.post('/api/login', (req, res, err) => {
 })
 
 router.get('/api/friends', (req, res, err) => {
-  console.log('this doesnt exist')
+  Users
+    .findById(req.session.user._id)
+    .then(user => {
+      Users
+        .find({ "_id": { $in: user.friends }})
+        .then(friends => {
+          console.log('friends', friends)
+          res.status(200).json(friends)
+        })
+        .catch(err)
+    })
+    .catch(err)
 })
 
 router.post('/api/friends', (req, res, err) => {
@@ -74,20 +91,26 @@ router.post('/api/friends', (req, res, err) => {
   Users
     .findOne({ email })
     .then( friend => {
+      // let friendId = friend._id
       Users
-        .findOneAndUpdate({ '_id' : req.session.user._id })
+        .findOne({ '_id' : req.session.user._id })
         .then( user => {
-          user.friends.push(user._id)
+          user.friends.push(friend._id)
+          user.markModified('friends')
+          user.save()
+          console.log('user', user)
         })
+        .catch(err)
     })
+    .catch(err)
 })
 
 router.post('/api/groups', (req, res, err) => {
-  console.log('this doesnt exist')
+  console.log('get the groups')
 })
 
 router.post('/api/groups', (req, res, err) => {
-  console.log('this doesnt exist')
+  console.log('make the groups')
 })
 
 router.post('/api/logout', (req, res, err) => {
@@ -95,22 +118,6 @@ router.post('/api/logout', (req, res, err) => {
 })
 
 module.exports = router
-
-// get: {
-//   route: "/login",
-//   users
-//   // saving user with redis
-// }
-
-// post: {
-//   route: "/register",
-//   users // password and email checking and posting
-// }
-
-// post: {
-//   route: "/register/:userId",
-//   users // adding other user info 
-// }
 
 // post: {
 //   route: "/createTask",
@@ -123,7 +130,7 @@ module.exports = router
 // }
 
 // post: {
-//   routes: "/addFriend/:userId1/:userId2",
+//   routes: "/addFriend/
 //   users // 
 // }
 

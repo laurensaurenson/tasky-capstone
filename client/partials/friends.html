@@ -1,3 +1,8 @@
 <h1>friends</h1>
 
+<div ng-repeat="friend in friends">
+  <h4>{{friend.profileInfo.userName}}</h4>
+  <h5>{{friend.email}}</h5>
+</div>
+
 <button ng-click="goToAddFriend()">+ new friend</button>
