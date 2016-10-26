@@ -26,6 +26,7 @@ module.exports = mongoose.model('user', {
   "achievedBadges" : { type: [ String ] },
   "groups" : { type: [ String ] },
   "friends" : { type: [ String ] },
+  "friendRequests" : { type: [ String ] }
 
 })
 
@@ -36,6 +37,7 @@ module.exports = mongoose.model('user', {
 //   birthDate: "10/03",
 //   description: "Sick AF",
 //   photo: "linkToPhoto.com",
-//   interests: [ "wellness", "reading", "cooking" ]
+//   interests: [ "wellness", "reading", "cooking" ],
+//   friends: ["friend1._id", "friend2._id"]
 // }
 

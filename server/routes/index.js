@@ -63,6 +63,31 @@ router.post('/api/login', (req, res, err) => {
     .catch(err)
 })
 
+router.get('/api/friends', (req, res, err) => {
+
+})
+
+router.post('/api/friends', (req, res, err) => {
+  const email = req.body.email
+  Users
+    .findOne({ email })
+    .then( friend => {
+      Users
+        .findOneAndUpdate({ '_id' : req.session.user._id })
+        .then( user => {
+          user.friends.push(user._id)
+        })
+    })
+})
+
+router.post('/api/groups', (req, res, err) => {
+
+})
+
+router.post('/api/groups', (req, res, err) => {
+
+})
+
 router.post('/api/logout', (req, res, err) => {
   req.session.destroy()
 })
@@ -141,6 +166,3 @@ module.exports = router
 // As a user, I want to be able to earn badges based on tasks completed.
 
 // As a user, I want to be able to level up based on earned points.
-
-
-

@@ -24,4 +24,12 @@ app.config(function ( $routeProvider ) {
       controller: 'NewTaskCtrl', 
       templateUrl: 'partials/newTask.html'
     })
+    .when('/friends', {
+      controller: 'FriendCtrl',
+      templateUrl: 'partials/friends.html'
+    })
+    .when('/friends/add', {
+      controller: 'FriendCtrl',
+      templateUrl: 'partials/addFriend.html'
+    })
 })
