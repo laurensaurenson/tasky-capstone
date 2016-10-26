@@ -12,7 +12,9 @@ const Users = require('../models/user')
 const Tasks = require('../models/task')
 
 router.use(session({
-    store: new RedisStore(),
+    store: new RedisStore({
+      url: process.env.REDIS_URL || 'redis://localhost:6379'
+    }),
     secret: 'supersecretkey'
 }));
 
