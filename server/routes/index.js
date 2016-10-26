@@ -12,7 +12,9 @@ const Users = require('../models/user')
 const Tasks = require('../models/task')
 
 router.use(session({
-    store: new RedisStore(),
+    store: new RedisStore({
+      url: process.env.REDIS_URL || 'redis://localhost:6379'
+    }),
     secret: 'supersecretkey'
 }));
 
@@ -61,6 +63,31 @@ router.post('/api/login', (req, res, err) => {
       }
     })
     .catch(err)
+})
+
+router.get('/api/friends', (req, res, err) => {
+  console.log('this doesnt exist')
+})
+
+router.post('/api/friends', (req, res, err) => {
+  const email = req.body.email
+  Users
+    .findOne({ email })
+    .then( friend => {
+      Users
+        .findOneAndUpdate({ '_id' : req.session.user._id })
+        .then( user => {
+          user.friends.push(user._id)
+        })
+    })
+})
+
+router.post('/api/groups', (req, res, err) => {
+  console.log('this doesnt exist')
+})
+
+router.post('/api/groups', (req, res, err) => {
+  console.log('this doesnt exist')
 })
 
 router.post('/api/logout', (req, res, err) => {
@@ -141,6 +168,3 @@ module.exports = router
 // As a user, I want to be able to earn badges based on tasks completed.
 
 // As a user, I want to be able to level up based on earned points.
-
-
-
