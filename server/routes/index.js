@@ -66,7 +66,7 @@ router.post('/api/login', (req, res, err) => {
 })
 
 router.get('/api/friends', (req, res, err) => {
-
+  console.log('this doesnt exist')
 })
 
 router.post('/api/friends', (req, res, err) => {
@@ -83,11 +83,11 @@ router.post('/api/friends', (req, res, err) => {
 })
 
 router.post('/api/groups', (req, res, err) => {
-
+  console.log('this doesnt exist')
 })
 
 router.post('/api/groups', (req, res, err) => {
-
+  console.log('this doesnt exist')
 })
 
 router.post('/api/logout', (req, res, err) => {
