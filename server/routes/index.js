@@ -11,6 +11,8 @@ const RedisStore = require('connect-redis')(session);
 const Users = require('../models/user')
 const Tasks = require('../models/task')
 
+const checkRepeatable = require('../controllers/taskRepeat')
+
 router.use(session({
     store: new RedisStore({
       url: process.env.REDIS_URL || 'redis://localhost:6379'
@@ -41,7 +43,12 @@ router.put('/api/register/:userId', (req, res, err) => {
 router.get('/api/tasks', (req, res, err) => {
   Tasks
     .find({'userId': req.session.user._id})
-    .then(tasks => res.json({tasks}))
+    .then(tasks => {
+      tasks.map( task => {
+        checkRepeatable( task )
+      })
+      res.json({tasks})
+    })
     .catch(err)
 })
 
@@ -78,7 +85,6 @@ router.get('/api/friends', (req, res, err) => {
       Users
         .find({ "_id": { $in: user.friends }})
         .then(friends => {
-          console.log('friends', friends)
           res.status(200).json(friends)
         })
         .catch(err)
@@ -91,14 +97,16 @@ router.post('/api/friends', (req, res, err) => {
   Users
     .findOne({ email })
     .then( friend => {
-      // let friendId = friend._id
       Users
         .findOne({ '_id' : req.session.user._id })
         .then( user => {
-          user.friends.push(friend._id)
-          user.markModified('friends')
-          user.save()
-          console.log('user', user)
+          if ( checkFriends( friend, user ) ) {
+            res.status(423).json(err)
+          } else {
+            user.friends.push(friend._id)
+            user.markModified('friends')
+            user.save()
+          }
         })
         .catch(err)
     })
@@ -116,6 +124,14 @@ router.post('/api/groups', (req, res, err) => {
 router.post('/api/logout', (req, res, err) => {
   req.session.destroy()
 })
+
+const checkFriends = ( friend, user ) => {
+  if ( user.friends.indexOf(friend._id) >= 0 ) {
+    return true
+  } else {
+    return false
+  }
+}
 
 module.exports = router
 

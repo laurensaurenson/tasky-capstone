@@ -26,6 +26,7 @@ module.exports = mongoose.model('user', {
   "achievedBadges" : { type: [ String ] },
   "groups" : { type: [ String ] },
   "friends" : { type: [ String ] },
+  "friendsWaiting" : { type: [ String ] },
   "friendRequests" : { type: [ String ] }
 
 })
