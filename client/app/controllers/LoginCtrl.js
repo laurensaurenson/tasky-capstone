@@ -15,4 +15,9 @@ app.controller('LoginCtrl', function ( $scope, $http, $rootScope ) {
       })
   }
 
+  $scope.logout = () => {
+    $http.post('/api/logout')
+    console.log('logout')
+  }
+
 })

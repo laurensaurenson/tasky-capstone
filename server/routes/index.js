@@ -10,6 +10,9 @@ const RedisStore = require('connect-redis')(session);
 
 const Users = require('../models/user')
 const Tasks = require('../models/task')
+const Groups = require('../models/group')
+
+const checkRepeatable = require('../controllers/taskRepeat')
 
 router.use(session({
     store: new RedisStore({
@@ -17,6 +20,12 @@ router.use(session({
     }),
     secret: 'supersecretkey'
 }));
+
+router.get('/api/user', (req, res, err ) => {
+  Users
+    .findById(req.session.user._id)
+    .then(user => res.status(201).json(user.profileInfo))
+})
 
 router.post('/api/register', (req, res, err) => {
   Users
@@ -34,8 +43,13 @@ router.put('/api/register/:userId', (req, res, err) => {
 
 router.get('/api/tasks', (req, res, err) => {
   Tasks
-    .find()
-    .then(tasks => res.json({tasks}))
+    .find({'userId': req.session.user._id})
+    .then(tasks => {
+      tasks.map( task => {
+        checkRepeatable( task )
+      })
+      res.json({tasks})
+    })
     .catch(err)
 })
 
@@ -65,57 +79,178 @@ router.post('/api/login', (req, res, err) => {
     .catch(err)
 })
 
+// get friend lists
 router.get('/api/friends', (req, res, err) => {
-  console.log('this doesnt exist')
+  Users
+    .findById(req.session.user._id)
+    .then(user => {
+      Users
+        .find({ "_id": { $in: user.friends }})
+        .then( friends => {
+          Users
+            .find({ "_id": { $in: user.friendsWaiting }})
+            .then( friendsWaiting => {
+              Users
+                .find({ "_id": { $in: user.friendRequests }})
+                .then( friendRequests => {
+                  res.status(200).json( { friends, friendsWaiting, friendRequests } )
+                })
+                .catch(err)
+            })
+            .catch(err)
+        })
+        .catch(err)
+    })
+    .catch(err)
 })
 
+// make friend request
 router.post('/api/friends', (req, res, err) => {
   const email = req.body.email
   Users
     .findOne({ email })
     .then( friend => {
       Users
-        .findOneAndUpdate({ '_id' : req.session.user._id })
+        .findOne({ '_id' : req.session.user._id })
         .then( user => {
-          user.friends.push(user._id)
+          if ( checkFriends( friend._id, user.friends ) ) {
+            res.status(423).json(err)
+          } else {
+            if ( checkFriends( user._id, friend.friendRequests || checkFriends( friend._id, user.friendsWaiting ) ) ) {
+              res.status(432).json(err)
+            } else {
+              user.friendsWaiting.push(friend._id)
+              friend.friendRequests.push(user._id)
+              user.save()
+              friend.save()
+            }
+          } 
+        })
+        .catch(err)
+    })
+    .catch(err)
+})
+
+// accept friend request
+router.post('/api/friends/accept/:friendId', (req, res, err) => {
+  Users
+    .findById( req.params.friendId )
+    .then( friend => {
+      Users
+        .findById( req.session.user._id ) 
+        .then( user => {
+          user.friends.push(friend._id)
+          friend.friends.push(user._id)
+          user.friendRequests.splice(user.friendRequests.indexOf(friend._id), 1)
+          friend.friendsWaiting.splice(friend.friendsWaiting.indexOf(user._id), 1)
+          user.save()
+          friend.save()
+          res.status(200)
         })
     })
 })
 
-router.post('/api/groups', (req, res, err) => {
-  console.log('this doesnt exist')
+// reject friend request
+router.post('/api/friends/reject/:friendId', (req, res, err) => {
+  Users
+    .findById( req.params.friendId )
+    .then( friend => {
+      Users
+        .findById( req.session.user._id ) 
+        .then( user => {
+          user.friendRequests.splice(user.friendRequests.indexOf(friend._id), 1)
+          friend.friendsWaiting.splice(friend.friendsWaiting.indexOf(user._id), 1)
+          user.save()
+          friend.save()
+          res.status(200)
+        })
+    })
 })
 
+// get groups for group view
+router.get('/api/groups', (req, res, err) => {
+  console.log('get the groups')
+  Groups
+    .find({ 'members' : { $includes: req.session.user._id } })
+    .then( groups => {
+      const groupArray = []
+      groups.forEach( group => {
+        if ( group.groupType ) {
+          groupArray.push(group)
+        }
+      })
+      res.status(200).json(groupArray)
+    })
+})
+
+// creates social groups
 router.post('/api/groups', (req, res, err) => {
-  console.log('this doesnt exist')
+  const group = req.body
+  group.admins = []
+  group.members = []
+  group.admins.push(req.session.user._id)
+  group.members.push(req.session.user._id)
+  group.groupType = true
+  Groups
+    .create( group )
+    .then( groupObj => {
+      Users
+        .find({ '_id' : req.session.user._id })
+        .then( user => {
+          user.groups.push(groupObj._id)
+          user.save()
+          res.status(200).json(groupObj)
+        })
+        .catch(err)
+    })
+    .catch(err)
+})
+
+// creates task collections not connected to social group
+router.post('/api/collections', (req, res, err) => {
+  const group = req.body
+  group.members = []
+  group.members.push(req.session.user._id)
+  Groups
+    .create( group )
+    .then( groupObj => {
+      Users
+        .find({ '_id' : req.session.user._id })
+        .then( user => {
+          user.groups.push(groupObj._id)
+          user.save()
+          res.status(200).json( groupObj )
+        })
+    })
 })
 
 router.post('/api/logout', (req, res, err) => {
   req.session.destroy()
 })
 
+const checkFriends = ( friendId, userArray ) => {
+  if ( userArray.indexOf(friendId) >= 0 ) {
+    return true
+  } else {
+    return false
+  }
+}
+
 module.exports = router
 
-// get: {
-//   route: "/login",
-//   users
-//   // saving user with redis
-// }
 
-// post: {
-//   route: "/register",
-//   users // password and email checking and posting
-// }
+// get groups
 
-// post: {
-//   route: "/register/:userId",
-//   users // adding other user info 
-// }
+// make new group
 
-// post: {
-//   route: "/createTask",
-//   tasks 
-// }
+// add user to group
+// // invite user to group
+// // accept invite to group
+// // reject invite to group
+
+// get group info
+
+// get group tasks
 
 // get: {
 //   route: "/tasks",
@@ -123,7 +258,7 @@ module.exports = router
 // }
 
 // post: {
-//   routes: "/addFriend/:userId1/:userId2",
+//   routes: "/addFriend/
 //   users // 
 // }
 
