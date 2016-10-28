@@ -78,20 +78,32 @@ router.post('/api/login', (req, res, err) => {
     .catch(err)
 })
 
+// get friend lists
 router.get('/api/friends', (req, res, err) => {
   Users
     .findById(req.session.user._id)
     .then(user => {
       Users
         .find({ "_id": { $in: user.friends }})
-        .then(friends => {
-          res.status(200).json(friends)
+        .then( friends => {
+          Users
+            .find({ "_id": { $in: user.friendsWaiting }})
+            .then( friendsWaiting => {
+              Users
+                .find({ "_id": { $in: user.friendRequests }})
+                .then( friendRequests => {
+                  res.status(200).json( { friends, friendsWaiting, friendRequests } )
+                })
+                .catch(err)
+            })
+            .catch(err)
         })
         .catch(err)
     })
     .catch(err)
 })
 
+// make friend request
 router.post('/api/friends', (req, res, err) => {
   const email = req.body.email
   Users
@@ -100,17 +112,58 @@ router.post('/api/friends', (req, res, err) => {
       Users
         .findOne({ '_id' : req.session.user._id })
         .then( user => {
-          if ( checkFriends( friend, user ) ) {
+          if ( checkFriends( friend._id, user.friends ) ) {
             res.status(423).json(err)
           } else {
-            user.friends.push(friend._id)
-            user.markModified('friends')
-            user.save()
-          }
+            if ( checkFriends( user._id, friend.friendRequests || checkFriends( friend._id, user.friendsWaiting ) ) ) {
+              res.status(432).json(err)
+            } else {
+              user.friendsWaiting.push(friend._id)
+              friend.friendRequests.push(user._id)
+              user.save()
+              friend.save()
+            }
+          } 
         })
         .catch(err)
     })
     .catch(err)
+})
+
+// accept friend request
+router.post('/api/friends/accept/:friendId', (req, res, err) => {
+  Users
+    .findById( req.params.friendId )
+    .then( friend => {
+      Users
+        .findById( req.session.user._id ) 
+        .then( user => {
+          user.friends.push(friend._id)
+          friend.friends.push(user._id)
+          user.friendRequests.splice(user.friendRequests.indexOf(friend._id), 1)
+          friend.friendsWaiting.splice(friend.friendsWaiting.indexOf(user._id), 1)
+          user.save()
+          friend.save()
+          res.status(200)
+        })
+    })
+})
+
+// reject friend request
+router.post('/api/friends/reject/:friendId', (req, res, err) => {
+  Users
+    .findById( req.params.friendId )
+    .then( friend => {
+      Users
+        .findById( req.session.user._id ) 
+        .then( user => {
+          user.friendRequests.splice(user.friendRequests.indexOf(friend._id), 1)
+          friend.friendsWaiting.splice(friend.friendsWaiting.indexOf(user._id), 1)
+          user.save()
+          friend.save()
+          res.status(200)
+        })
+    })
 })
 
 router.post('/api/groups', (req, res, err) => {
@@ -125,8 +178,8 @@ router.post('/api/logout', (req, res, err) => {
   req.session.destroy()
 })
 
-const checkFriends = ( friend, user ) => {
-  if ( user.friends.indexOf(friend._id) >= 0 ) {
+const checkFriends = ( friendId, userArray ) => {
+  if ( userArray.indexOf(friendId) >= 0 ) {
     return true
   } else {
     return false
@@ -135,10 +188,19 @@ const checkFriends = ( friend, user ) => {
 
 module.exports = router
 
-// post: {
-//   route: "/createTask",
-//   tasks 
-// }
+
+// get groups
+
+// make new group
+
+// add user to group
+// // invite user to group
+// // accept invite to group
+// // reject invite to group
+
+// get group info
+
+// get group tasks
 
 // get: {
 //   route: "/tasks",

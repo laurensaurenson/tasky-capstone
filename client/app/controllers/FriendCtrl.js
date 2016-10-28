@@ -13,10 +13,33 @@ app.controller('FriendCtrl', function ( $scope, $http, $location ) {
     $http.post('/api/friends', newFriend)
   }
 
-  $http.get('/api/friends')
-    .then(friends => {
-      $scope.friends = friends.data
-      console.log('friends:  ', friends)
-    })
+  $scope.acceptFriend = ( friendId ) => {
+    $http.post(`/api/friends/accept/${friendId}`)
+      .then( data => {
+        getFriends()
+      })
+  }
+
+  $scope.rejectFriend = ( friendId ) => {
+    $http.post(`/api/friends/reject/${friendId}`)
+      .then( data => {
+        getFriends()
+      })
+  }
+
+  const getFriends = () => {
+    $http.get('/api/friends')
+      .then(({ data: { friends, friendsWaiting, friendRequests } }) => {
+        $scope.friends = friends
+        $scope.friendsWaiting = friendsWaiting
+        $scope.friendRequests = friendRequests
+        console.log('friends:  ', friends)
+        console.log('friendsWaiting:  ', friendsWaiting)
+        console.log('friendRequests:  ', friendRequests)
+      })
+  }
+
+  getFriends()
+
 
 })

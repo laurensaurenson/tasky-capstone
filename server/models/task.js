@@ -45,6 +45,9 @@ module.exports = mongoose.model('task', {
   "completed" : {
     type : Boolean,
     default : false 
+  },
+  "groupId" : {
+    type: String
   } 
 
 })

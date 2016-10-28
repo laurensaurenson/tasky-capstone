@@ -6,7 +6,7 @@ module.exports = mongoose.model('user', {
 
   "email" : { 
     type: String, 
-    // unique: true 
+    unique: true 
   },
   "password" : { type: String },
   "profileInfo" : { 
