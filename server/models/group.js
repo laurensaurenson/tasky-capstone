@@ -7,9 +7,17 @@ module.exports = mongoose.model('group', {
     type: String
   },
   'admins': {
-    type: [String]
+    type: [ String ]
   },
   'description': {
     type: String
+  },
+  'members': {
+    type: [ String ]
+  },
+  'groupType': {
+    type: Boolean,
+    default: false
   }
+
 })

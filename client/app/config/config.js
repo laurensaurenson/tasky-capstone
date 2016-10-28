@@ -36,6 +36,14 @@ app.config(function ( $routeProvider ) {
       controller: 'ProfileCtrl',
       templateUrl: 'partials/profile.html'
     })
+    .when('/groups', {
+      controller: 'GroupCtrl',
+      templateUrl: 'partials/groupView.html'
+    })
+    .when('/groups/new', {
+      controller: 'GroupCtrl',
+      templateUrl: 'partials/groupNew.html'
+    })
     .when('/logout', {
       controller: 'LoginCtrl',
       templateUrl: 'partials/logout.html'

@@ -10,6 +10,7 @@ const RedisStore = require('connect-redis')(session);
 
 const Users = require('../models/user')
 const Tasks = require('../models/task')
+const Groups = require('../models/group')
 
 const checkRepeatable = require('../controllers/taskRepeat')
 
@@ -166,12 +167,61 @@ router.post('/api/friends/reject/:friendId', (req, res, err) => {
     })
 })
 
-router.post('/api/groups', (req, res, err) => {
+// get groups for group view
+router.get('/api/groups', (req, res, err) => {
   console.log('get the groups')
+  Groups
+    .find({ 'members' : { $includes: req.session.user._id } })
+    .then( groups => {
+      const groupArray = []
+      groups.forEach( group => {
+        if ( group.groupType ) {
+          groupArray.push(group)
+        }
+      })
+      res.status(200).json(groupArray)
+    })
 })
 
+// creates social groups
 router.post('/api/groups', (req, res, err) => {
-  console.log('make the groups')
+  const group = req.body
+  group.admins = []
+  group.members = []
+  group.admins.push(req.session.user._id)
+  group.members.push(req.session.user._id)
+  group.groupType = true
+  Groups
+    .create( group )
+    .then( groupObj => {
+      Users
+        .find({ '_id' : req.session.user._id })
+        .then( user => {
+          user.groups.push(groupObj._id)
+          user.save()
+          res.status(200).json(groupObj)
+        })
+        .catch(err)
+    })
+    .catch(err)
+})
+
+// creates task collections not connected to social group
+router.post('/api/collections', (req, res, err) => {
+  const group = req.body
+  group.members = []
+  group.members.push(req.session.user._id)
+  Groups
+    .create( group )
+    .then( groupObj => {
+      Users
+        .find({ '_id' : req.session.user._id })
+        .then( user => {
+          user.groups.push(groupObj._id)
+          user.save()
+          res.status(200).json( groupObj )
+        })
+    })
 })
 
 router.post('/api/logout', (req, res, err) => {
