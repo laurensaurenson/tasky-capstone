@@ -11,12 +11,10 @@ const app = express()
 
 const port = process.env.PORT || 3210;
 
-app.set("port", port);
+app.set("port", port)
 
-
-
-app.use(express.static('client'));
-app.use(json());
+app.use(express.static('client'))
+app.use(json())
 
 // routes
 app.use(routes)

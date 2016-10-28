@@ -11,8 +11,13 @@ app.controller('NewTaskCtrl', function ( $scope, $http, $location ) {
       notes: $scope.notes
     }
 
+    console.log('task: ', newTask)
+
     $http.post('/api/tasks', newTask)
-      .then(task => $location.path('/tasks'))
+      .then(task => {
+        console.log('posted task: ', task)
+        $location.path('/tasks')
+      })
 
   }
 

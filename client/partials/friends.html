@@ -1,3 +1,28 @@
 <h1>friends</h1>
 
+<h3>friends</h3>
+<div ng-repeat="friend in friends">
+  <h4>{{friend.profileInfo.userName}}</h4>
+  <h5>{{friend.email}}</h5>
+</div>
+
+<h3>waiting</h3>
+<div ng-repeat="friend in friendsWaiting">
+  <h4>{{friend.profileInfo.userName}}</h4>
+  <h5>{{friend.email}}</h5>
+</div>
+
+<h3>requests</h3>
+<div ng-repeat="friend in friendRequests">
+  <h4>{{friend.profileInfo.userName}}</h4>
+  <h5>{{friend.email}}</h5>
+  <h5>{{friend._id}}</h5>
+  <form ng-submit="acceptFriend(friend._id)" accept-charset="utf-8">
+    <button type="submit">accept request</button>
+  </form>
+  <form ng-submit="rejectFriend(friend._id)" accept-charset="utf-8">
+    <button type="submit">reject request</button>
+  </form>
+</div>
+
 <button ng-click="goToAddFriend()">+ new friend</button>
