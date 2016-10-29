@@ -1,0 +1,17 @@
+<h1>groups</h1>
+
+<div ng-repeat="group in groups">
+  <h2>{{group.name}}</h2>
+  <button type="" ng-click="goToGroupPage(group._id)">go to group</button>
+</div>
+
+<h1>group invites</h1>
+<div ng-repeat="group in invitedGroups">
+  <h2>{{group.name}}</h2>
+  <button type="" ng-click="goToGroupPage(group._id)">go to group</button>
+  <button type="" ng-click="acceptGroup(group._id)">accept</button>
+  <button type="" ng-click="rejectGroup(group._id)">reject</button>
+</div>
+
+<button ng-click="goToNewGroup()">create new group</button>
+

@@ -56,7 +56,7 @@ router.get('/api/tasks', (req, res, err) => {
 router.post('/api/tasks', (req, res, err) => {
   const task = req.body
   task.userId = req.session.user._id
-
+  
   Tasks
     .create(task)
     .then( task => res.status(201).json(task))
@@ -113,10 +113,10 @@ router.post('/api/friends', (req, res, err) => {
       Users
         .findOne({ '_id' : req.session.user._id })
         .then( user => {
-          if ( checkFriends( friend._id, user.friends ) ) {
+          if ( checkArray( friend._id, user.friends ) ) {
             res.status(423).json(err)
           } else {
-            if ( checkFriends( user._id, friend.friendRequests || checkFriends( friend._id, user.friendsWaiting ) ) ) {
+            if ( checkArray( user._id, friend.friendRequests || checkArray( friend._id, user.friendsWaiting ) ) ) {
               res.status(432).json(err)
             } else {
               user.friendsWaiting.push(friend._id)
@@ -169,18 +169,24 @@ router.post('/api/friends/reject/:friendId', (req, res, err) => {
 
 // get groups for group view
 router.get('/api/groups', (req, res, err) => {
-  console.log('get the groups')
   Groups
-    .find({ 'members' : { $includes: req.session.user._id } })
+    // .find({ 'members' : { $contains: req.session.user._id } })
+    .find({ 'members' : req.session.user._id })
     .then( groups => {
-      const groupArray = []
-      groups.forEach( group => {
-        if ( group.groupType ) {
-          groupArray.push(group)
-        }
+      Groups.find({ 'invitedMembers' : req.session.user._id })
+      .then( invitedGroups => {
+        res.status(200).json({ groups, invitedGroups })
       })
-      res.status(200).json(groupArray)
     })
+    .catch(err)
+})
+
+// get groups and collections
+router.get('/api/collections', (req, res, err) => {
+  Groups
+    .find({ '_id' : req.session.user.groups })
+    .then( groups => res.status(200).json( groups ))
+    .catch(err)
 })
 
 // creates social groups
@@ -195,7 +201,7 @@ router.post('/api/groups', (req, res, err) => {
     .create( group )
     .then( groupObj => {
       Users
-        .find({ '_id' : req.session.user._id })
+        .findById( req.session.user._id )
         .then( user => {
           user.groups.push(groupObj._id)
           user.save()
@@ -206,11 +212,108 @@ router.post('/api/groups', (req, res, err) => {
     .catch(err)
 })
 
+// get specific group for detail page
+router.get('/api/groups/:groupId', (req, res, err) => {
+  Groups
+    .findById( req.params.groupId )
+    .then( group => {
+      res.status(200).json( group )
+    })
+    .catch(err)
+})
+
+// edits groups
+router.put('/api/groups/edit/:groupId', (req, res, err) => {
+  Groups
+    .findOneAndUpdate( req.params.groupId, req.body, {upsert: true} )
+    .then( group => {
+      if ( checkArray( req.session.user._id, group.admins ) ) {
+        res.status(200).json( group )
+      } else {
+        res.status(415).json( err )
+      }
+    })
+    .catch(err)
+})
+
+// invite group member
+router.post('/api/groups/invite/:groupId', (req, res, err) => {
+  Groups
+    .findById( req.params.groupId )
+    .then( group => {
+      Users
+        .findOne({ 'email': req.body.email })
+        .then( user => {
+          if ( checkArray( user._id, group.invitedMembers ) || checkArray( group._id, user.groupInvites ) ) {
+            res.status(413).json(err) // checks that invited user is not already invited to group
+          } else if ( checkArray( user._id, group.members ) || checkArray( group._id, user.groups ) ) {
+            res.status(412).json(err) // checks to see that invited user is not already a member
+          } else if ( !checkArray( req.session.user._id, group.admins ) ) {
+            res.status(414).json(err) // checks that user has permission to invite to group
+          } else {
+            user.groupInvites.push(group._id)
+            group.invitedMembers.push(user._id)
+            user.save()
+            group.save()
+            res.status(200).json( group )
+          }
+        })
+        .catch(err)
+    })
+    .catch(err)
+})
+
+// accept group invite
+router.post('/api/groups/accept/:groupId', (req, res, err) => {
+  Groups
+    .findById( req.params.groupId )
+    .then( group => {
+      Users
+        .findById( req.session.user._id )
+        .then( user => {
+          if ( !checkArray( user._id, group.invitedMembers ) || !checkArray( group._id, user.groupInvites ) ) {
+            res.status(412).json(err)
+          } else {
+            removeFromArray(user._id, group.invitedMembers)
+            removeFromArray(group._id, user.groupInvites)
+            user.groups.push(group._id)
+            group.members.push(user._id)
+            user.save()
+            group.save()
+            res.status(200).json(group)
+          }
+        })
+        .catch(err)
+    })
+    .catch(err)
+})
+
+// reject group invite
+router.post('/api/groups/reject/:groupId', (req, res, err) => {
+  Groups
+    .findById( req.params.groupId )
+    .then( group => {
+      Users
+        .findById( req.session.user._id )
+        .then( user => {
+          if ( !checkArray( user._id, group.invitedMembers ) || !checkArray( group._id, user.groupInvites ) ) {
+            res.status(412).json(err)
+          } else {
+            removeFromArray(user._id, group.invitedMembers)
+            removeFromArray(group._id, user.groupInvites)
+            user.save()
+            group.save()
+            res.status(200).json(group)
+          }
+        })
+        .catch(err)
+    })
+    .catch(err)
+})
+
 // creates task collections not connected to social group
 router.post('/api/collections', (req, res, err) => {
   const group = req.body
-  group.members = []
-  group.members.push(req.session.user._id)
   Groups
     .create( group )
     .then( groupObj => {
@@ -228,7 +331,9 @@ router.post('/api/logout', (req, res, err) => {
   req.session.destroy()
 })
 
-const checkFriends = ( friendId, userArray ) => {
+const removeFromArray = ( value, array ) => array.splice( value, 1 )
+
+const checkArray = ( friendId, userArray ) => {
   if ( userArray.indexOf(friendId) >= 0 ) {
     return true
   } else {
@@ -239,9 +344,6 @@ const checkFriends = ( friendId, userArray ) => {
 module.exports = router
 
 
-// get groups
-
-// make new group
 
 // add user to group
 // // invite user to group

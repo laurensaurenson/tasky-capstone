@@ -27,7 +27,7 @@ app.controller('RegisterCtrl', function ( $scope, $http, $location, $routeParams
     }
 
     $http.put(`/api/register/${userId}`, { profileInfo: userInfo })
-      .then(user => $location.path(`/tasks`))
+      .then(user => $location.path(`/login`))
 
   }
 

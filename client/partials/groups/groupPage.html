@@ -1,0 +1,12 @@
+<a href="#/groups" title="">back to groups</a>
+
+<h1>group view: {{group.name}}</h1>
+
+<p>description: {{group.description}}</p>
+
+<form ng-submit="inviteMember()" method="get" accept-charset="utf-8">
+  <label>invite by email: <input ng-model="email" type="text" name="" value=""></label>
+  <button type="submit">invite</button>
+</form>
+
+<button type="" ng-click="goToGroupEdit(group._id)">edit</button>

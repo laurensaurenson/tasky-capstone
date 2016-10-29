@@ -20,25 +20,15 @@ module.exports = mongoose.model('user', {
 
   "ranking" : { type: String },
   "points" : { type: String },
+  "achievedBadges" : { type: [ String ] },
   
   "interests" : { type: [ String ] },
 
-  "achievedBadges" : { type: [ String ] },
   "groups" : { type: [ String ] },
+  "groupInvites" : { type: [ String ]},
+
   "friends" : { type: [ String ] },
   "friendsWaiting" : { type: [ String ] },
   "friendRequests" : { type: [ String ] }
 
 })
-
-// {
-//   email: "lauren@lauren.com",
-//   password: "1234",
-//   userName: "Lauren",
-//   birthDate: "10/03",
-//   description: "Sick AF",
-//   photo: "linkToPhoto.com",
-//   interests: [ "wellness", "reading", "cooking" ],
-//   friends: ["friend1._id", "friend2._id"]
-// }
-
