@@ -18,10 +18,14 @@ app.controller('GroupCtrl', function ( $scope, $http, $location ) {
       })
   }
 
+  $scope.goToGroupPage = id => {
+    $location.path(`/groups/${id}`)
+  }
+
   $http.get('/api/groups')
     .then( groups => {
       console.log('user groups: ', groups)
-      $scope.groups = groups
+      $scope.groups = groups.data
     })
 
 })

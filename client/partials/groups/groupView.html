@@ -1,0 +1,8 @@
+<h1>groups</h1>
+
+<div ng-repeat="group in groups">
+  <h2>{{group.name}}</h2>
+  <button type="" ng-click="goToGroupPage(group._id)">go to group</button>
+</div>
+
+<button ng-click="goToNewGroup()">create new group</button>

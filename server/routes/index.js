@@ -113,10 +113,10 @@ router.post('/api/friends', (req, res, err) => {
       Users
         .findOne({ '_id' : req.session.user._id })
         .then( user => {
-          if ( checkFriends( friend._id, user.friends ) ) {
+          if ( checkArray( friend._id, user.friends ) ) {
             res.status(423).json(err)
           } else {
-            if ( checkFriends( user._id, friend.friendRequests || checkFriends( friend._id, user.friendsWaiting ) ) ) {
+            if ( checkArray( user._id, friend.friendRequests || checkArray( friend._id, user.friendsWaiting ) ) ) {
               res.status(432).json(err)
             } else {
               user.friendsWaiting.push(friend._id)
@@ -171,7 +171,8 @@ router.post('/api/friends/reject/:friendId', (req, res, err) => {
 router.get('/api/groups', (req, res, err) => {
   console.log('get the groups')
   Groups
-    .find({ 'members' : { $includes: req.session.user._id } })
+    // .find({ 'members' : { $contains: req.session.user._id } })
+    .find({ 'members' : req.session.user._id })
     .then( groups => {
       const groupArray = []
       groups.forEach( group => {
@@ -179,8 +180,22 @@ router.get('/api/groups', (req, res, err) => {
           groupArray.push(group)
         }
       })
-      res.status(200).json(groupArray)
+      res.status(200).json( groupArray )
     })
+    .catch(err)
+})
+
+// get groups and collections
+router.get('/api/groups', (req, res, err) => {
+  console.log('get the groups and collections')
+  Groups
+    // .find({ 'members' : { $contains: req.session.user._id } })
+    .find({ '_id' : req.session.user.groups })
+    .then( groups => {
+      console.log('groups: ', groups)
+      res.status(200).json( groups )
+    })
+    .catch(err)
 })
 
 // creates social groups
@@ -195,8 +210,9 @@ router.post('/api/groups', (req, res, err) => {
     .create( group )
     .then( groupObj => {
       Users
-        .find({ '_id' : req.session.user._id })
+        .findById( req.session.user._id )
         .then( user => {
+          console.log('user', user.groups)
           user.groups.push(groupObj._id)
           user.save()
           res.status(200).json(groupObj)
@@ -206,11 +222,42 @@ router.post('/api/groups', (req, res, err) => {
     .catch(err)
 })
 
+// get specific group for detail page
+router.get('/api/groups/:groupId', (req, res, err) => {
+  console.log('get the specific group')
+  Groups
+    .findById( req.params.groupId )
+    .then( group => {
+      console.log('group', group)
+      res.status(200).json( group )
+    })
+    .catch(err)
+})
+
+// edits groups
+router.put('/api/groups/edit/:groupId', (req, res, err) => {
+  Groups
+    .findOneAndUpdate( req.params.groupId, req.body, {upsert: true} )
+    .then( group => {
+      console.log('group editted', group)
+      if ( checkArray( req.session.user._id, group.admins ) ) {
+        res.status(200).json( group )
+      } else {
+        res.status(415).json( err )
+      }
+    })
+    .catch(err)
+})
+
+// invite group member
+
+// accept group invite
+
+// reject group invite
+
 // creates task collections not connected to social group
 router.post('/api/collections', (req, res, err) => {
   const group = req.body
-  group.members = []
-  group.members.push(req.session.user._id)
   Groups
     .create( group )
     .then( groupObj => {
@@ -228,7 +275,7 @@ router.post('/api/logout', (req, res, err) => {
   req.session.destroy()
 })
 
-const checkFriends = ( friendId, userArray ) => {
+const checkArray = ( friendId, userArray ) => {
   if ( userArray.indexOf(friendId) >= 0 ) {
     return true
   } else {
@@ -239,9 +286,6 @@ const checkFriends = ( friendId, userArray ) => {
 module.exports = router
 
 
-// get groups
-
-// make new group
 
 // add user to group
 // // invite user to group

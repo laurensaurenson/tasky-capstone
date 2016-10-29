@@ -4,6 +4,7 @@ app.config(function ( $routeProvider ) {
       controller: 'HomeCtrl',
       templateUrl: 'partials/home.html'
     })
+    // user routing //
     .when('/login', {
       controller: 'LoginCtrl',
       templateUrl: 'partials/login.html'
@@ -16,6 +17,11 @@ app.config(function ( $routeProvider ) {
       controller: 'RegisterCtrl', 
       templateUrl: 'partials/registerInfo.html'
     })
+    .when('/profile', {
+      controller: 'ProfileCtrl',
+      templateUrl: 'partials/profile.html'
+    })
+    // task routing //
     .when('/tasks', {
       controller: 'TaskCtrl',
       templateUrl: 'partials/tasks.html'
@@ -24,6 +30,7 @@ app.config(function ( $routeProvider ) {
       controller: 'NewTaskCtrl', 
       templateUrl: 'partials/newTask.html'
     })
+    // friend routing //
     .when('/friends', {
       controller: 'FriendCtrl',
       templateUrl: 'partials/friends.html'
@@ -32,17 +39,22 @@ app.config(function ( $routeProvider ) {
       controller: 'FriendCtrl',
       templateUrl: 'partials/addFriend.html'
     })
-    .when('/profile', {
-      controller: 'ProfileCtrl',
-      templateUrl: 'partials/profile.html'
-    })
+    // group routing //
     .when('/groups', {
       controller: 'GroupCtrl',
-      templateUrl: 'partials/groupView.html'
+      templateUrl: 'partials/groups/groupView.html'
     })
     .when('/groups/new', {
       controller: 'GroupCtrl',
-      templateUrl: 'partials/groupNew.html'
+      templateUrl: 'partials/groups/groupNew.html'
+    })
+    .when('/groups/:groupId', {
+      controller: 'GroupViewCtrl',
+      templateUrl: 'partials/groups/groupPage.html'
+    })
+    .when('/groups/edit/:groupId', {
+      controller: 'GroupEditCtrl',
+      templateUrl: 'partials/groups/groupEdit.html'
     })
     .when('/logout', {
       controller: 'LoginCtrl',
