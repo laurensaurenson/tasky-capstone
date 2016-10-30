@@ -45,10 +45,17 @@ router.get('/api/tasks', (req, res, err) => {
   Tasks
     .find({'userId': req.session.user._id})
     .then(tasks => {
+      const completeTasks = []
+      const incompleteTasks = []
       tasks.map( task => {
         checkRepeatable( task )
+        if( task.completed ) {
+          completeTasks.push( task )
+        } else {
+          incompleteTasks.push( task )
+        }
       })
-      res.json({tasks})
+      res.json({ completeTasks, incompleteTasks })
     })
     .catch(err)
 })
@@ -60,6 +67,43 @@ router.post('/api/tasks', (req, res, err) => {
   Tasks
     .create(task)
     .then( task => res.status(201).json(task))
+    .catch(err)
+})
+
+router.get('/api/tasks/:taskId', (req, res, err) => {
+  Tasks
+    .findById(req.params.taskId)
+    .then( task => {
+      res.status(200).json(task)
+    })
+    .catch(err)
+})
+
+router.put('/api/tasks/edit/:taskId', (req, res, err) => {
+  Tasks
+    .findByIdAndUpdate(req.params.taskId, req.body)
+    .then( task => {
+      res.status(200).json(task)
+    })
+})
+
+router.put('/api/tasks/complete/:taskId', (req, res, err) => {
+  Tasks
+    .findById(req.params.taskId)
+    .then( task => {
+      task.completed = true
+      task.save()
+      res.status(200).json(task)
+    })
+    .catch(err)
+})
+
+router.post('/api/tasks/delete/:taskId', (req, res, err) => {
+  Tasks
+    .findByIdAndRemove(req.params.taskId)
+    .then( task => {
+      res.status(200).json(task)
+    })
     .catch(err)
 })
 
@@ -343,65 +387,29 @@ const checkArray = ( friendId, userArray ) => {
 
 module.exports = router
 
+// score points
+// // level up logic
+// // level point #s
 
+// badge tracking
+// // track points
+// // track group specifc user points
+// // badges associated with pre-determined task groups
+// // badges associated with 'custom' task groups
+// // badges associated with social groups
 
-// add user to group
-// // invite user to group
-// // accept invite to group
-// // reject invite to group
-
-// get group info
+// get user social-groups/collections for task page
+// // to associate the task with
+// // fetch into select drop
+// // additionally needs to include + custom
+// be able to create custom collection for tasks
 
 // get group tasks
 
-// get: {
-//   route: "/tasks",
-//   tasks // get user tasks
-// }
+// // *** aesthetic *** // //
 
-// post: {
-//   routes: "/addFriend/
-//   users // 
-// }
-
-// post: {
-//   route: "/completeTask/:taskId",
-//   tasks
-// }
-
-// get: {
-//   routes: "/logout",
-//   destroy // destroy redis session
-// }
-
-// // // 
-
-// GIVEN _ WHEN _ THEN _
-
-// As a user, I want to be able to login to personal profile.
-
-// As a user, I want to be able to create tasks.
-
-// As a user, I want to be able to view my personal tasks.
-
-// As a user, I want to be able to add friends.
-
-// As a user, I want to be able to join groups with friends.
-
-// As a friend, I want my profile to be viewable by friends.
-
-// As a group member, I want to be able to mark tasks as visible to group.
-
-// As a group member, I want to be able to view other group member's associated tasks.
-
-// As a group member, I want some form of group communication or interaction.
-
-// As a user, I want to be able to mark tasks as completeTask.
-
-// As a user, I want to be able to have tasks repeatable on certain time frames.
-
-// As a user, I want to be able to gain points based on completed tasks.
-
-// As a user, I want to be able to earn badges based on tasks completed.
-
-// As a user, I want to be able to level up based on earned points.
+// create task icons 
+// // assignable with tasks
+// // chosen with creation
+// // fetch into sortable select feature
+// // topically grouped vs view all

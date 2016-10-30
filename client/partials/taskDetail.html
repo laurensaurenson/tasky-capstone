@@ -1,0 +1,9 @@
+<button ng-click="goToTasks()">back to tasks</button>
+
+<h1>task details: {{task.taskName}}</h1>
+
+<p>description : {{task.notes}}</p>
+
+<button ng-click="completeTask(task._id)">complete</button>
+<button ng-click="editTask(task._id)">edit</button>
+<button ng-click="deleteTask(task._id)">delete</button>

@@ -30,6 +30,14 @@ app.config(function ( $routeProvider ) {
       controller: 'NewTaskCtrl', 
       templateUrl: 'partials/newTask.html'
     })
+    .when('/tasks/edit/:taskId', {
+      controller: 'TaskEditCtrl',
+      templateUrl: 'partials/editTask.html'
+    })
+    .when('/tasks/:taskId', {
+      controller: 'TaskDetailCtrl',
+      templateUrl: 'partials/taskDetail.html'
+    })
     // friend routing //
     .when('/friends', {
       controller: 'FriendCtrl',
