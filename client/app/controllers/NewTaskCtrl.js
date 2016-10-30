@@ -3,22 +3,13 @@
 app.controller('NewTaskCtrl', function ( $scope, $http, $location ) {
 
   $scope.addTask = () => {
-    const newTask = {
-      taskName: $scope.name,
-      repeatableTime: $scope.repeat,
-      type: $scope.type,
-      difficulty: $scope.difficulty, 
-      notes: $scope.notes
-    }
-
-    console.log('task: ', newTask)
-
-    $http.post('/api/tasks', newTask)
-      .then(task => {
-        console.log('posted task: ', task)
-        $location.path('/tasks')
-      })
-
+    $http.post('/api/tasks', $scope.newTask)
+      .then(task => $location.path('/tasks'))
   }
+
+  $scope.goToCreateCollection = () => $location.path('/collections/new')
+
+  $http.get('/api/collections')
+    .then( groups => $scope.groups = groups.data)
 
 })

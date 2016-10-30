@@ -3,6 +3,7 @@
 const mongoose = require('mongoose')
 
 module.exports = mongoose.model('group', {
+  
   'name': { type: String },
   'description': { type: String },
   
@@ -10,9 +11,9 @@ module.exports = mongoose.model('group', {
   'members': { type: [ String ]},
   'invitedMembers': { type: [ String ]},
 
-  // 'groupType': {
-  //   type: Boolean,
-  //   default: false
-  // }
+  'suggested': { 
+    type: Boolean, 
+    default: false 
+  }
 
 })

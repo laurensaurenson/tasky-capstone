@@ -3,10 +3,10 @@
 const { Router } = require('express')
 const router = Router()
 
-const { json } = require('body-parser');
+const { json } = require('body-parser')
 
-const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
+const session = require('express-session')
+const RedisStore = require('connect-redis')(session)
 
 const Users = require('../models/user')
 const Tasks = require('../models/task')
@@ -19,7 +19,7 @@ router.use(session({
       url: process.env.REDIS_URL || 'redis://localhost:6379'
     }),
     secret: 'supersecretkey'
-}));
+}))
 
 router.get('/api/user', (req, res, err ) => {
   Users
@@ -214,7 +214,6 @@ router.post('/api/friends/reject/:friendId', (req, res, err) => {
 // get groups for group view
 router.get('/api/groups', (req, res, err) => {
   Groups
-    // .find({ 'members' : { $contains: req.session.user._id } })
     .find({ 'members' : req.session.user._id })
     .then( groups => {
       Groups.find({ 'invitedMembers' : req.session.user._id })
@@ -227,9 +226,14 @@ router.get('/api/groups', (req, res, err) => {
 
 // get groups and collections
 router.get('/api/collections', (req, res, err) => {
-  Groups
-    .find({ '_id' : req.session.user.groups })
-    .then( groups => res.status(200).json( groups ))
+  Users
+    .findById(req.session.user._id)
+    .then( user => {  
+      Groups
+        .find({ '_id' : { $in: user.groups } })
+        .then( groups => res.status(200).json( groups ))
+        .catch(err)
+    })
     .catch(err)
 })
 
@@ -387,9 +391,20 @@ const checkArray = ( friendId, userArray ) => {
 
 module.exports = router
 
+// get user social-groups/collections for task page
+// // additionally needs to include + custom
+// be able to create custom collection for tasks
+// // create view to choose suggested groups / tasks
+
+// get group tasks
+
 // score points
 // // level up logic
 // // level point #s
+
+// ( difficulty * repeatableTime ) * 10
+// // ( 1 * 1 ) * 10 = 10 ( easy daily )
+// // ( 2 * 3 ) * 10 = 60 ( medium monthly)
 
 // badge tracking
 // // track points
@@ -397,14 +412,6 @@ module.exports = router
 // // badges associated with pre-determined task groups
 // // badges associated with 'custom' task groups
 // // badges associated with social groups
-
-// get user social-groups/collections for task page
-// // to associate the task with
-// // fetch into select drop
-// // additionally needs to include + custom
-// be able to create custom collection for tasks
-
-// get group tasks
 
 // // *** aesthetic *** // //
 
