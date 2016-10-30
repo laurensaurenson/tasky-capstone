@@ -9,4 +9,11 @@
   <button type="submit">invite</button>
 </form>
 
+<h3>tasks: </h3>
+<div ng-repeat="task in tasks">
+  <p>user: {{task.username}}</p>  
+  <p>task name: {{task.taskName}}</p>  
+  <p>notes: {{task.notes}}</p>  
+</div>
+
 <button type="" ng-click="goToGroupEdit(group._id)">edit</button>

@@ -37,6 +37,7 @@ router.get('/api/tasks', (req, res, err) => {
 router.post('/api/tasks', (req, res, err) => {
   const task = req.body
   task.userId = req.session.user._id
+  task.userName = req.session.user.userName
   
   Tasks
     .create(task)

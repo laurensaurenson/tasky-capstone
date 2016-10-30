@@ -10,6 +10,9 @@ app.controller('GroupViewCtrl', function ( $scope, $http, $location, $routeParam
   }
 
   $http.get(`/api/groups/${$routeParams.groupId}`)
-    .then( group => $scope.group = group.data)
+    .then( group => {
+      $scope.group = group.data.group
+      $scope.tasks = group.data.tasks
+    })
 
 })

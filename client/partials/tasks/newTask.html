@@ -13,7 +13,12 @@
   <label>task collection: <select name="" ng-model="newTask.groupId" ng-options="group._id as group.name for group in groups">
   </select></label>
   OR
-  <button ng-click="showCreateCollection()">+ new collect</button>
+  <div ng-click="showCreateCollection()">+ new collect</div>
+  <div ng-show="createCollection">
+    <h3>new collection</h3>
+    <label>name: <input ng-model="collection.name" type="text" name="" value=""></label>
+    <h4 ng-click="submitCollection()">create collection</h4>
+  </div>
 
   <button type="submit">submit</button>
 </form>

@@ -56,12 +56,15 @@ router.get('/api/groups/:groupId', (req, res, err) => {
   Groups
     .findById( req.params.groupId )
     .then( group => {
-      res.status(200).json( group )
+      Tasks
+        .find({ 'groupId' : group._id })
+        .then( tasks => {
+          res.status(200).json({ group, tasks })
+        })
+        .catch(err)
     })
     .catch(err)
 })
-
-
 
 // edits groups
 router.put('/api/groups/edit/:groupId', (req, res, err) => {

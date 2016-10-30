@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 
 module.exports = mongoose.model('user', {
 
+  "username": { type: String },
   "email" : { 
     type: String, 
     unique: true 

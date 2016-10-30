@@ -10,10 +10,10 @@
 
 <button ng-click="goToNewTask()">+ new task</button>
 
+<h3>completed: </h3>
 <div ng-repeat="task in completeTasks">
   <h4>name: {{task.taskName}} </h4>
   <p>{{task.notes}}</p>
   <p>complete: {{task.completed}}</p>
-  <button ng-click="completeTask(task._id)">complete task</button>
   <button ng-click="goToTask(task._id)">task details</button>
 </div>

@@ -38,9 +38,18 @@ app.config(function ( $routeProvider ) {
       controller: 'TaskDetailCtrl',
       templateUrl: 'partials/tasks/taskDetail.html'
     })
+    // collection routing //
     .when('/collections', {
       controller: 'CollectionCtrl',
       templateUrl: 'partials/collections.html'    
+    })
+    .when('/collections/new', {
+      controller: 'CollectionCtrl',
+      templateUrl: 'partials/collectionNew.html'
+    })
+    .when('/collections/:collectionId', {
+      controller: 'CollectionViewCtrl',
+      templateUrl: 'partials/collectionPageView.html'
     })
     // friend routing //
     .when('/friends', {

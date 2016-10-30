@@ -18,6 +18,7 @@ const getMonth = () => {
 
 module.exports = mongoose.model('task', {
   "userId": { type: String },
+  "username": { type: String },
 
   "taskName" : { type: String }, 
   "icon" : { type: { 

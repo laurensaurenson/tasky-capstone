@@ -21,12 +21,10 @@ router.use(require('./collections'))
 
 module.exports = router
 
-// get user social-groups/collections for task page
-// // additionally needs to include + custom
-// be able to create custom collection for tasks
-// // create view to choose suggested groups / tasks
-
-// get group tasks
+// add username
+// // to task
+// // to user
+// // user creation screen
 
 // score points
 // // level up logic
@@ -35,6 +33,8 @@ module.exports = router
 // ( difficulty * repeatableTime ) * 10
 // // ( 1 * 1 ) * 10 = 10 ( easy daily )
 // // ( 2 * 3 ) * 10 = 60 ( medium monthly)
+
+// // create view to choose suggested groups / tasks
 
 // badge tracking
 // // track points
