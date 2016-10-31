@@ -1,0 +1,14 @@
+<h2>edit task {{task.taskName}}</h2>
+
+<form ng-submit="editTask()" accept-charset="utf-8">
+  <label>Task Name: <input ng-model="task.taskName" type="text" name="" value=""></label>
+  <label>Notes: <input ng-model="task.notes" type="textarea" name="" value=""></label>
+  <label><select name="" ng-model="task.repeatableTime">
+    <option value="0" >none</option>
+    <option value="1">daily</option>
+    <option value="2">weekly</option>
+    <option value="3">monthly</option>
+  </select></label>
+
+  <button type="submit">submit</button>
+</form>

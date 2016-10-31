@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 
 module.exports = mongoose.model('user', {
 
+  "username": { type: String },
   "email" : { 
     type: String, 
     unique: true 
@@ -18,8 +19,17 @@ module.exports = mongoose.model('user', {
     }
   },
 
+  // "badges": {
+  //   type: {
+  //     "daily10"
+  //   },
+  // }
+
   "ranking" : { type: String },
-  "points" : { type: String },
+  "points" : { 
+    type: Number,
+    default: 0 
+  },
   "achievedBadges" : { type: [ String ] },
   
   "interests" : { type: [ String ] },

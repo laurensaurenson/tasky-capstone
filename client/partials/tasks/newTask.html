@@ -1,0 +1,24 @@
+<h2>new task</h2>
+
+<form ng-submit="addTask()" accept-charset="utf-8">
+  <label>Task Name: <input ng-model="newTask.taskName" type="text" name="" value=""></label>
+  <label>Notes: <input ng-model="newTask.notes" type="textarea" name="" value=""></label>
+  <label>repeat? <select name="" ng-model="newTask.repeatableTime">
+    <option value="0" selected>none</option>
+    <option value="1">daily</option>
+    <option value="2">weekly</option>
+    <option value="3">monthly</option>
+  </select></label>
+
+  <label>task collection: <select name="" ng-model="newTask.groupId" ng-options="group._id as group.name for group in groups">
+  </select></label>
+  OR
+  <div ng-click="showCreateCollection()">+ new collect</div>
+  <div ng-show="createCollection">
+    <h3>new collection</h3>
+    <label>name: <input ng-model="collection.name" type="text" name="" value=""></label>
+    <h4 ng-click="submitCollection()">create collection</h4>
+  </div>
+
+  <button type="submit">submit</button>
+</form>

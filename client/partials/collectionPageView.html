@@ -1,0 +1,10 @@
+<button ng-click="backToCollections()">back to collections</button>
+<h1>collection: {{collection.name}}</h1>
+
+<!-- <button ng-click="goToCollectionEdit()">edit</button> -->
+<!-- <button ng-click="deleteCollection()">delete</button> -->
+
+<h3>associated tasks: </h3>
+<div ng-repeat="task in tasks">
+  <h4>task: {{task.taskName}}</h4>
+</div>

@@ -2,8 +2,6 @@
 
 app.controller('GroupCtrl', function ( $scope, $http, $location ) {
 
-  // $route.reload()
-
   $scope.goToNewGroup = () => {
     $location.path('/groups/new')
   }
@@ -22,27 +20,19 @@ app.controller('GroupCtrl', function ( $scope, $http, $location ) {
 
   $scope.acceptGroup = groupId => {
     $http.post(`/api/groups/accept/${groupId}`)
-      .then( group => {
-        console.log('group', group)
-      })
+      .then( group => $route.reload())
   }
 
   $scope.rejectGroup = groupId => {
     $http.post(`/api/groups/reject/${groupId}`)
-      .then( group => {
-        console.log('group', group)
-      })
+      .then( group => $route.reload())
   }
 
-  $scope.goToGroupPage = id => {
-    $location.path(`/groups/${id}`)
-  }
+  $scope.goToGroupPage = id => $location.path(`/groups/${id}`)
 
   $http.get('/api/groups')
     .then( groups => {
-      console.log('user groups: ', groups)
       $scope.groups = groups.data.groups
-      console.log('scope groups', groups.data)
       $scope.invitedGroups = groups.data.invitedGroups
     })
 

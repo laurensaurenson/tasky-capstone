@@ -1,0 +1,9 @@
+<h1>collections</h1>
+
+<div ng-repeat="collection in collections">
+  <h1>name: {{collection.name}}</h1>
+  <p>{{collection._id}}</p>
+  <button ng-click="goToCollectionPage(collection._id)">view collection</button>
+</div>
+
+<button ng-click="goToNewCollection()">new collection</button>

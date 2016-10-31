@@ -18,12 +18,14 @@ const getMonth = () => {
 
 module.exports = mongoose.model('task', {
   "userId": { type: String },
+  "username": { type: String },
 
   "taskName" : { type: String }, 
   "icon" : { type: { 
       "iconDesc" : { type: String },
       "iconLink" : { type: String }
     }}, 
+
   "repeatableTime" : { type: Number }, 
   "dayRef" : { 
     type: Number,
@@ -33,9 +35,15 @@ module.exports = mongoose.model('task', {
     type: Number, 
     default: getMonth()
   },
-  "type" : { type: String }, 
-  "importance" : { type: String }, 
-  "difficulty" : { type: Number }, 
+
+  "importance" : { 
+    type: Number,
+    default: 1 
+  }, 
+  "difficulty" : { 
+    type: Number,
+    default: 1 
+  }, 
   "notifications" : { type: Boolean }, 
   "notes" : { type: String }, 
   "suggested" : { 
@@ -51,24 +59,3 @@ module.exports = mongoose.model('task', {
   } 
 
 })
-
-
-// {
-//   taskName: Read the book,
-//   icon: {
-//     iconDesc: open book,
-//     iconLink: bookimage.com
-//   },
-//   repeatable: true,
-//   repeatableTime: weekly,
-//   type: Reading,
-//   importance: "kinda",
-//   difficulty: "low", // OR 3, // out of 10  ?
-//   notifications: true,
-//   notes: "read the assigned book"
-// }
-
-// taskGroups: 
-//   exercise,
-//   study,
-//   cooking,

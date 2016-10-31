@@ -7,28 +7,49 @@ app.config(function ( $routeProvider ) {
     // user routing //
     .when('/login', {
       controller: 'LoginCtrl',
-      templateUrl: 'partials/login.html'
+      templateUrl: 'partials/user/login.html'
     })
     .when('/register', {
       controller: 'RegisterCtrl',
-      templateUrl: 'partials/register.html'
+      templateUrl: 'partials/user/register.html'
     })
     .when('/register/:userId', {
       controller: 'RegisterCtrl', 
-      templateUrl: 'partials/registerInfo.html'
+      templateUrl: 'partials/user/registerInfo.html'
     })
     .when('/profile', {
       controller: 'ProfileCtrl',
-      templateUrl: 'partials/profile.html'
+      templateUrl: 'partials/user/profile.html'
     })
     // task routing //
     .when('/tasks', {
       controller: 'TaskCtrl',
-      templateUrl: 'partials/tasks.html'
+      templateUrl: 'partials/tasks/tasks.html'
     })
     .when('/tasks/new', {
       controller: 'NewTaskCtrl', 
-      templateUrl: 'partials/newTask.html'
+      templateUrl: 'partials/tasks/newTask.html'
+    })
+    .when('/tasks/edit/:taskId', {
+      controller: 'TaskEditCtrl',
+      templateUrl: 'partials/tasks/editTask.html'
+    })
+    .when('/tasks/:taskId', {
+      controller: 'TaskDetailCtrl',
+      templateUrl: 'partials/tasks/taskDetail.html'
+    })
+    // collection routing //
+    .when('/collections', {
+      controller: 'CollectionCtrl',
+      templateUrl: 'partials/collections.html'    
+    })
+    .when('/collections/new', {
+      controller: 'CollectionCtrl',
+      templateUrl: 'partials/collectionNew.html'
+    })
+    .when('/collections/:collectionId', {
+      controller: 'CollectionViewCtrl',
+      templateUrl: 'partials/collectionPageView.html'
     })
     // friend routing //
     .when('/friends', {
