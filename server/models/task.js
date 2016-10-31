@@ -36,12 +36,14 @@ module.exports = mongoose.model('task', {
     default: getMonth()
   },
 
-  // "type" : { type: String }, 
   "importance" : { 
     type: Number,
     default: 1 
   }, 
-  "difficulty" : { type: Number }, 
+  "difficulty" : { 
+    type: Number,
+    default: 1 
+  }, 
   "notifications" : { type: Boolean }, 
   "notes" : { type: String }, 
   "suggested" : { 

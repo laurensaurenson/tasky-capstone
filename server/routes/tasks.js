@@ -60,15 +60,22 @@ router.put('/api/tasks/edit/:taskId', (req, res, err) => {
     .then( task => {
       res.status(200).json(task)
     })
+    .catch(err)
 })
 
 router.put('/api/tasks/complete/:taskId', (req, res, err) => {
   Tasks
     .findById(req.params.taskId)
     .then( task => {
-      task.completed = true
-      task.save()
-      res.status(200).json(task)
+      Users
+        .findById(req.session.user._id)
+        .then( user => {
+          user.points += calculatePoints(task)
+          user.save()
+          task.completed = true
+          task.save()
+          res.status(200).json(task)
+        })
     })
     .catch(err)
 })
@@ -81,5 +88,7 @@ router.post('/api/tasks/delete/:taskId', (req, res, err) => {
     })
     .catch(err)
 })
+
+const calculatePoints = task => ( task.difficulty * task.repeatableTime ) * 10
 
 module.exports = router

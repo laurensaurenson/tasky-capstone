@@ -18,7 +18,7 @@ const { checkArray, removeFromArray } = require('../controllers/arrayCtrl')
 router.get('/api/user', (req, res, err ) => {
   Users
     .findById(req.session.user._id)
-    .then(user => res.status(201).json(user.profileInfo))
+    .then(user => res.status(201).json(user))
 })
 
 router.post('/api/register', (req, res, err) => {

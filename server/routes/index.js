@@ -21,20 +21,8 @@ router.use(require('./collections'))
 
 module.exports = router
 
-// add username
-// // to task
-// // to user
-// // user creation screen
-
-// score points
-// // level up logic
-// // level point #s
-
-// ( difficulty * repeatableTime ) * 10
-// // ( 1 * 1 ) * 10 = 10 ( easy daily )
-// // ( 2 * 3 ) * 10 = 60 ( medium monthly)
-
-// // create view to choose suggested groups / tasks
+// level up logic
+// level point #s
 
 // badge tracking
 // // track points
@@ -43,7 +31,9 @@ module.exports = router
 // // badges associated with 'custom' task groups
 // // badges associated with social groups
 
-// // *** aesthetic *** // //
+// // *** aesthetic or extra UX *** // //
+
+// // create view to choose suggested groups / tasks
 
 // create task icons 
 // // assignable with tasks
